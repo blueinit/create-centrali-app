@@ -135,6 +135,10 @@ function SetupView() {
           Copy <Code>.env.example</Code> to <Code>.env</Code>
         </li>
         <li>Add your workspace slug, client ID, and client secret</li>
+        <li>
+          Add <Code>http://localhost:5173</Code> to your workspace's allowed origins
+          (Console &rarr; Settings &rarr; Allowed Origins)
+        </li>
         <li>Restart the dev server</li>
       </ol>
       <p className="mt-4 text-sm text-gray-500">
