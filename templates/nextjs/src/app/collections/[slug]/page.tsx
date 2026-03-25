@@ -18,7 +18,7 @@ export default async function CollectionPage({
     const colRes = await centrali.collections.getBySlug(slug);
     collection = colRes.data;
     const recRes = await centrali.queryRecords(slug);
-    records = recRes.data?.data ?? [];
+    records = recRes?.data ?? [];
   } catch (err: any) {
     error = err.message ?? "Failed to load collection";
   }

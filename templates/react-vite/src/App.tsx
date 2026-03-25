@@ -62,7 +62,7 @@ export default function App() {
     try {
       const centrali = createCentraliClient();
       const res = await centrali.queryRecords(col.recordSlug);
-      setRecords(res.data?.data ?? []);
+      setRecords(res?.data ?? []);
     } catch (err: any) {
       setError(err.message ?? "Failed to fetch records");
     } finally {
