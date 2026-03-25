@@ -1,0 +1,37 @@
+{
+  "name": "create-centrali-app",
+  "version": "1.0.0",
+  "description": "Create a new Centrali-powered app with one command",
+  "bin": {
+    "create-centrali-app": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "centrali",
+    "create-app",
+    "scaffold",
+    "react",
+    "nextjs",
+    "typescript"
+  ],
+  "author": "Centrali <support@centrali.io>",
+  "license": "MIT",
+  "dependencies": {
+    "prompts": "^2.4.2",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/prompts": "^2.4.9",
+    "typescript": "^5.7.0"
+  }
+}
