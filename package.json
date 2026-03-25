@@ -23,6 +23,10 @@
     "nextjs",
     "typescript"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blueinit/create-centrali-app"
+  },
   "author": "Centrali <support@centrali.io>",
   "license": "MIT",
   "dependencies": {
