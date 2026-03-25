@@ -1,5 +1,5 @@
 {
-  "name": "create-centrali-app",
+  "name": "@centrali-io/create-centrali-app",
   "version": "1.0.0",
   "description": "Create a new Centrali-powered app with one command",
   "bin": {
@@ -33,5 +33,9 @@
     "@types/node": "^22.0.0",
     "@types/prompts": "^2.4.9",
     "typescript": "^5.7.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }

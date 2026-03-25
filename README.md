@@ -5,18 +5,18 @@ Scaffold a new Centrali-powered app with one command.
 ## Usage
 
 ```bash
-npx create-centrali-app my-app
+npx @centrali-io/create-centrali-app my-app
 ```
 
 ### Options
 
 ```bash
 # Choose a specific template
-npx create-centrali-app my-app --template=react-vite
-npx create-centrali-app my-app --template=nextjs
+npx @centrali-io/create-centrali-app my-app --template=react-vite
+npx @centrali-io/create-centrali-app my-app --template=nextjs
 
 # Use JavaScript instead of TypeScript
-npx create-centrali-app my-app --no-typescript
+npx @centrali-io/create-centrali-app my-app --no-typescript
 ```
 
 ### Templates
