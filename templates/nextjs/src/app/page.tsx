@@ -29,8 +29,12 @@ export default async function Home() {
           <p className="mt-2 text-xs text-gray-400">
             Once your app is built, you can switch to your own auth provider and pass user tokens instead.
             See the{" "}
-            <a href="https://docs.centrali.io" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
-              auth provider docs
+            <a href="https://docs.centrali.dev/resources/why-centrali#bring-your-own-token-byot" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
+              BYOT docs
+            </a>
+            {" "}or{" "}
+            <a href="https://centrali.io/blog/byot-bring-your-own-token-external-idp" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
+              blog post
             </a>
             {" "}for details.
           </p>
