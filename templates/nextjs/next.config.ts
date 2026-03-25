@@ -13,16 +13,6 @@ const nextConfig: NextConfig = {
         hostname: "api.centrali.io",
         pathname: "/**",
       },
-      {
-        protocol: "https",
-        hostname: "centrali.dev",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "api.centrali.dev",
-        pathname: "/**",
-      },
     ],
   },
 };
