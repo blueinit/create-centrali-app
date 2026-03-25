@@ -18,6 +18,13 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      - name: Set version from release tag
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          VERSION="${TAG#v}"
+          npm version "$VERSION" --no-git-tag-version
+
       - run: npm ci
       - run: npm run build
 
