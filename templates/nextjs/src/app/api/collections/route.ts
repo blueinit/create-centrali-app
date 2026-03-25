@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { centrali } from "@/lib/centrali";
+import { createCentraliClient } from "@/lib/centrali";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const centrali = createCentraliClient();
     const result = await centrali.collections.create({
       name: body.name,
       recordSlug: body.recordSlug,

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { centrali } from "./centrali";
+import { createCentraliClient } from "./centrali";
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -23,7 +23,7 @@ type View = "setup" | "collections" | "records";
 export default function App() {
   const isConfigured =
     import.meta.env.VITE_CENTRALI_WORKSPACE &&
-    import.meta.env.VITE_CENTRALI_API_KEY;
+    import.meta.env.VITE_CENTRALI_CLIENT_ID;
 
   const [view, setView] = useState<View>(isConfigured ? "collections" : "setup");
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -38,6 +38,7 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
+      const centrali = createCentraliClient();
       const res = await centrali.collections.list();
       setCollections(res.data ?? []);
     } catch (err: any) {
@@ -59,6 +60,7 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
+      const centrali = createCentraliClient();
       const res = await centrali.queryRecords(col.recordSlug);
       setRecords(res.data?.data ?? []);
     } catch (err: any) {
@@ -132,15 +134,16 @@ function SetupView() {
         <li>
           Copy <Code>.env.example</Code> to <Code>.env</Code>
         </li>
-        <li>Add your Centrali workspace slug and API key</li>
+        <li>Add your workspace slug and service account token</li>
         <li>Restart the dev server</li>
       </ol>
       <p className="mt-4 text-sm text-gray-500">
-        Get your API key from the{" "}
+        Create a service account in the{" "}
         <a href="https://centrali.io" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
           Centrali console
         </a>
-        &rarr; Settings &rarr; API Keys.
+        {" "}&rarr; Settings &rarr; Service Accounts, then add it to the{" "}
+        <strong>workspace_administrators</strong> or <strong>workspace_developers</strong> group.
       </p>
     </Card>
   );
@@ -251,6 +254,7 @@ function CreateCollectionForm({
     setSubmitting(true);
     setError(null);
     try {
+      const centrali = createCentraliClient();
       await centrali.collections.create({
         name: name.trim(),
         recordSlug: slug,
@@ -421,6 +425,7 @@ function CreateRecordForm({
         else if (field.type === "boolean") data[field.name] = raw === "true";
         else data[field.name] = raw;
       }
+      const centrali = createCentraliClient();
       await centrali.createRecord(collection.recordSlug, data);
       onCreated();
     } catch (err: any) {

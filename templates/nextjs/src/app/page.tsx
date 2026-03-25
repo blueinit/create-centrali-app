@@ -1,10 +1,10 @@
-import { centrali } from "@/lib/centrali";
+import { createCentraliClient } from "@/lib/centrali";
 import Link from "next/link";
 import { CreateCollectionForm } from "./CreateCollectionForm";
 
 export default async function Home() {
   const isConfigured =
-    process.env.CENTRALI_WORKSPACE && process.env.CENTRALI_API_KEY;
+    process.env.CENTRALI_WORKSPACE && process.env.CENTRALI_CLIENT_ID;
 
   if (!isConfigured) {
     return (
@@ -15,15 +15,16 @@ export default async function Home() {
             <li>
               Copy <Code>.env.example</Code> to <Code>.env</Code>
             </li>
-            <li>Add your Centrali workspace slug and API key</li>
+            <li>Add your workspace slug and service account credentials</li>
             <li>Restart the dev server</li>
           </ol>
           <p className="mt-4 text-sm text-gray-500">
-            Get your API key from the{" "}
+            Create a service account in the{" "}
             <a href="https://centrali.io" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
               Centrali console
             </a>
-            {" "}&rarr; Settings &rarr; API Keys.
+            {" "}&rarr; Settings &rarr; Service Accounts, then add it to the{" "}
+            <strong>workspace_administrators</strong> or <strong>workspace_developers</strong> group.
           </p>
         </Card>
       </Shell>
@@ -34,6 +35,7 @@ export default async function Home() {
   let error: string | null = null;
 
   try {
+    const centrali = createCentraliClient();
     const res = await centrali.collections.list();
     collections = res.data ?? [];
   } catch (err: any) {

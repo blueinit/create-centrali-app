@@ -1,4 +1,4 @@
-import { centrali } from "@/lib/centrali";
+import { createCentraliClient } from "@/lib/centrali";
 import Link from "next/link";
 import { CreateRecordForm } from "./CreateRecordForm";
 
@@ -14,6 +14,7 @@ export default async function CollectionPage({
   let error: string | null = null;
 
   try {
+    const centrali = createCentraliClient();
     const colRes = await centrali.collections.getBySlug(slug);
     collection = colRes.data;
     const recRes = await centrali.queryRecords(slug);
