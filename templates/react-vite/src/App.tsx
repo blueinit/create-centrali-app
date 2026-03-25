@@ -134,7 +134,7 @@ function SetupView() {
         <li>
           Copy <Code>.env.example</Code> to <Code>.env</Code>
         </li>
-        <li>Add your workspace slug and service account token</li>
+        <li>Add your workspace slug, client ID, and client secret</li>
         <li>Restart the dev server</li>
       </ol>
       <p className="mt-4 text-sm text-gray-500">
