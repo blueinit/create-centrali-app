@@ -26,6 +26,14 @@ export default async function Home() {
             {" "}&rarr; Settings &rarr; Service Accounts, then add it to the{" "}
             <strong>workspace_administrators</strong> or <strong>workspace_developers</strong> group.
           </p>
+          <p className="mt-2 text-xs text-gray-400">
+            Once your app is built, you can switch to your own auth provider and pass user tokens instead.
+            See the{" "}
+            <a href="https://docs.centrali.io" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
+              auth provider docs
+            </a>
+            {" "}for details.
+          </p>
         </Card>
       </Shell>
     );
