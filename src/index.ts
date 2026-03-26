@@ -5,6 +5,7 @@ import pc from "picocolors";
 import path from "node:path";
 import fs from "node:fs";
 import { scaffold } from "./scaffold.js";
+import { envCommand } from "./env.js";
 
 const TEMPLATES = [
   { title: "React + Vite", value: "react-vite" },
@@ -20,6 +21,10 @@ interface Options {
 }
 
 async function main() {
+  // Handle subcommands
+  if (process.argv[2] === "env") {
+    return envCommand(process.argv.slice(3));
+  }
   console.log();
   console.log(pc.bold(pc.blue("create-centrali-app")));
   console.log(pc.dim("Scaffold a new Centrali-powered app\n"));
@@ -97,23 +102,16 @@ async function main() {
   console.log(`  ${pc.cyan(`cd ${options.projectName}`)}`);
   console.log(`  ${pc.cyan("npm install")}`);
   console.log();
-  console.log(`  ${pc.dim("# Configure your .env file:")}`);
-
-  if (options.template === "react-vite") {
-    console.log(`  ${pc.dim("#   VITE_CENTRALI_WORKSPACE  — your workspace slug")}`);
-    console.log(`  ${pc.dim("#   VITE_CENTRALI_PK         — your publishable key (pk_live_...)")}`);
-  } else {
-    console.log(`  ${pc.dim("#   NEXT_PUBLIC_CENTRALI_WORKSPACE  — your workspace slug")}`);
-    console.log(`  ${pc.dim("#   NEXT_PUBLIC_CENTRALI_PK         — your publishable key (pk_live_...)")}`);
-    console.log(`  ${pc.dim("#   CENTRALI_CLIENT_ID              — service account (server-side only)")}`);
-    console.log(`  ${pc.dim("#   CENTRALI_CLIENT_SECRET           — service account (server-side only)")}`);
-  }
-
-  console.log(`  ${pc.dim("#")}`);
-  console.log(`  ${pc.dim("# Create a publishable key in your Centrali console:")}`);
-  console.log(`  ${pc.dim("#   Console > ACCESS > Publishable Keys > Create Key")}`);
+  console.log(`  ${pc.dim("# Set up your environment variables:")}`);
+  console.log(`  ${pc.cyan("npx create-centrali-app env")}`);
   console.log();
-  console.log(`  ${pc.cyan("npm run dev")}\n`);
+  console.log(`  ${pc.dim("# Or configure manually — see .env.example")}`);
+  console.log(`  ${pc.dim("# Create a publishable key: Console > ACCESS > Publishable Keys")}`);
+  console.log();
+  console.log(`  ${pc.cyan("npm run dev")}`);
+  console.log();
+  console.log(`  ${pc.dim("# Ready to deploy? See DEPLOY.md for Vercel/Netlify instructions")}`);
+  console.log();
   console.log(`Docs: ${pc.underline("https://docs.centrali.io")}`);
   console.log();
 }
