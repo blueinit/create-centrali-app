@@ -11,21 +11,11 @@ module.exports = async (ctx) => {
   if (record?.data?.status === "invited") {
     const email = record.data.email;
 
-    // TODO: Send an actual invite email. Pick one:
-    //
-    // Option 1 — Clerk Invitations API (recommended):
+    // TODO: Send an actual invite via Clerk Invitations API:
     //   await api.httpPost("https://api.clerk.com/v1/invitations", {
     //     headers: { Authorization: "Bearer sk_live_..." },
     //     body: { email_address: email, redirect_url: "https://yourapp.com/sign-up" },
     //   });
-    //
-    // Option 2 — Resend (https://resend.com):
-    //   await api.httpPost("https://api.resend.com/emails", {
-    //     headers: { Authorization: "Bearer re_..." },
-    //     body: { from: "team@yourapp.com", to: email, subject: "You're invited!", html: "<p>Join us</p>" },
-    //   });
-    //
-    // Option 3 — SendGrid, Postmark, or any HTTP email API via api.httpPost()
 
     console.log(`[on-member-invited] TODO: send invite email to ${email}`);
   }
