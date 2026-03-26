@@ -96,7 +96,14 @@ async function main() {
   console.log("Next steps:\n");
   console.log(`  ${pc.cyan(`cd ${options.projectName}`)}`);
   console.log(`  ${pc.cyan("npm install")}`);
-  console.log(`  ${pc.dim("# Add your Centrali workspace URL and API key to .env")}`);
+  console.log();
+  console.log(`  ${pc.dim("# Configure your .env file:")}`);
+  console.log(`  ${pc.dim("#   VITE_CENTRALI_WORKSPACE  — your workspace slug")}`);
+  console.log(`  ${pc.dim("#   VITE_CENTRALI_PK         — your publishable key (pk_live_...)")}`);
+  console.log(`  ${pc.dim("#")}`);
+  console.log(`  ${pc.dim("# Create a publishable key in your Centrali console:")}`);
+  console.log(`  ${pc.dim("#   Console > ACCESS > Publishable Keys > Create Key")}`);
+  console.log();
   console.log(`  ${pc.cyan("npm run dev")}\n`);
   console.log(`Docs: ${pc.underline("https://docs.centrali.io")}`);
   console.log();
