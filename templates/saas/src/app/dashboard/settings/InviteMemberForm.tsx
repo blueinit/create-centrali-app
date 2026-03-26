@@ -35,7 +35,7 @@ export function InviteMemberForm({ orgId }: { orgId: string }) {
         onClick={() => setOpen(true)}
         className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
       >
-        Add member
+        Invite member
       </button>
     );
   }
@@ -55,7 +55,7 @@ export function InviteMemberForm({ orgId }: { orgId: string }) {
         disabled={loading}
         className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
       >
-        {loading ? "Adding..." : "Add"}
+        {loading ? "Inviting..." : "Invite"}
       </button>
       <button
         type="button"
