@@ -4,7 +4,7 @@ import prompts from "prompts";
 import pc from "picocolors";
 
 type Format = "dotenv" | "vercel" | "netlify";
-type TemplateType = "react-vite" | "nextjs" | "unknown";
+type TemplateType = "react-vite" | "nextjs" | "saas" | "unknown";
 
 interface EnvVar {
   key: string;
@@ -23,6 +23,7 @@ function detectTemplate(): TemplateType {
   const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
   const deps = { ...pkg.dependencies, ...pkg.devDependencies };
 
+  if (deps["@clerk/nextjs"]) return "saas";
   if (deps["next"]) return "nextjs";
   if (deps["vite"] || deps["@vitejs/plugin-react"]) return "react-vite";
   return "unknown";
@@ -54,7 +55,7 @@ function readExistingEnv(): Record<string, string> {
 
 /** Get the env var definitions for a template */
 function getVarDefs(template: TemplateType): EnvVar[] {
-  if (template === "nextjs") {
+  if (template === "nextjs" || template === "saas") {
     return [
       { key: "NEXT_PUBLIC_CENTRALI_API_URL", value: "https://centrali.io", description: "Centrali API URL", secret: false },
       { key: "NEXT_PUBLIC_CENTRALI_WORKSPACE", value: "", description: "Workspace slug", secret: false },
@@ -146,7 +147,12 @@ export async function envCommand(args: string[]) {
     console.log(pc.dim("Run this command from a project created with create-centrali-app.\n"));
     console.log("Defaulting to React + Vite env vars.\n");
   } else {
-    console.log(`Detected template: ${pc.cyan(template === "nextjs" ? "Next.js" : "React + Vite")}\n`);
+    const templateNames: Record<string, string> = {
+      nextjs: "Next.js",
+      "react-vite": "React + Vite",
+      saas: "SaaS Starter",
+    };
+    console.log(`Detected template: ${pc.cyan(templateNames[template] ?? template)}\n`);
   }
 
   // Read existing values
