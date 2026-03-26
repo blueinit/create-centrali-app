@@ -98,8 +98,17 @@ async function main() {
   console.log(`  ${pc.cyan("npm install")}`);
   console.log();
   console.log(`  ${pc.dim("# Configure your .env file:")}`);
-  console.log(`  ${pc.dim("#   VITE_CENTRALI_WORKSPACE  — your workspace slug")}`);
-  console.log(`  ${pc.dim("#   VITE_CENTRALI_PK         — your publishable key (pk_live_...)")}`);
+
+  if (options.template === "react-vite") {
+    console.log(`  ${pc.dim("#   VITE_CENTRALI_WORKSPACE  — your workspace slug")}`);
+    console.log(`  ${pc.dim("#   VITE_CENTRALI_PK         — your publishable key (pk_live_...)")}`);
+  } else {
+    console.log(`  ${pc.dim("#   NEXT_PUBLIC_CENTRALI_WORKSPACE  — your workspace slug")}`);
+    console.log(`  ${pc.dim("#   NEXT_PUBLIC_CENTRALI_PK         — your publishable key (pk_live_...)")}`);
+    console.log(`  ${pc.dim("#   CENTRALI_CLIENT_ID              — service account (server-side only)")}`);
+    console.log(`  ${pc.dim("#   CENTRALI_CLIENT_SECRET           — service account (server-side only)")}`);
+  }
+
   console.log(`  ${pc.dim("#")}`);
   console.log(`  ${pc.dim("# Create a publishable key in your Centrali console:")}`);
   console.log(`  ${pc.dim("#   Console > ACCESS > Publishable Keys > Create Key")}`);
