@@ -5,6 +5,27 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Load .env.local since tsx doesn't auto-load it like Next.js does
+function loadEnvFile(filePath: string) {
+  if (!fs.existsSync(filePath)) return;
+  const content = fs.readFileSync(filePath, "utf-8");
+  for (const line of content.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eqIdx = trimmed.indexOf("=");
+    if (eqIdx === -1) continue;
+    const key = trimmed.slice(0, eqIdx).trim();
+    const val = trimmed.slice(eqIdx + 1).trim();
+    if (!process.env[key]) {
+      process.env[key] = val;
+    }
+  }
+}
+
+const projectRoot = path.resolve(__dirname, "..");
+loadEnvFile(path.join(projectRoot, ".env.local"));
+loadEnvFile(path.join(projectRoot, ".env"));
+
 async function main() {
   if (!process.env.CENTRALI_WORKSPACE || !process.env.CENTRALI_CLIENT_ID) {
     console.error(
