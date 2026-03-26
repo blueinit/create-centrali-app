@@ -11,6 +11,7 @@ interface EnvVar {
   value: string;
   description: string;
   secret: boolean;
+  mirrors?: string;
 }
 
 const FORMATS: Format[] = ["dotenv", "vercel", "netlify"];
@@ -57,11 +58,9 @@ function readExistingEnv(): Record<string, string> {
 function getVarDefs(template: TemplateType): EnvVar[] {
   if (template === "nextjs" || template === "saas") {
     return [
-      { key: "NEXT_PUBLIC_CENTRALI_API_URL", value: "https://centrali.io", description: "Centrali API URL", secret: false },
-      { key: "NEXT_PUBLIC_CENTRALI_WORKSPACE", value: "", description: "Workspace slug", secret: false },
+      { key: "NEXT_PUBLIC_CENTRALI_API_URL", value: "https://centrali.io", description: "Centrali API URL", secret: false, mirrors: "CENTRALI_API_URL" },
+      { key: "NEXT_PUBLIC_CENTRALI_WORKSPACE", value: "", description: "Workspace slug", secret: false, mirrors: "CENTRALI_WORKSPACE" },
       { key: "NEXT_PUBLIC_CENTRALI_PK", value: "", description: "Publishable key (pk_live_...)", secret: false },
-      { key: "CENTRALI_API_URL", value: "https://centrali.io", description: "Centrali API URL (server)", secret: false },
-      { key: "CENTRALI_WORKSPACE", value: "", description: "Workspace slug (server)", secret: false },
       { key: "CENTRALI_CLIENT_ID", value: "", description: "Service account client ID (ci_...)", secret: true },
       { key: "CENTRALI_CLIENT_SECRET", value: "", description: "Service account secret (sk_...)", secret: true },
     ];
@@ -109,25 +108,38 @@ async function promptForValues(vars: EnvVar[], existing: Record<string, string>)
   return result;
 }
 
+/** Expand mirrored vars so both keys get the same value in output */
+function expandVars(vars: EnvVar[]): EnvVar[] {
+  const expanded: EnvVar[] = [];
+  for (const v of vars) {
+    expanded.push(v);
+    if (v.mirrors) {
+      expanded.push({ key: v.mirrors, value: v.value, description: v.description, secret: v.secret });
+    }
+  }
+  return expanded;
+}
+
 /** Format output */
 function formatOutput(vars: EnvVar[], format: Format): string {
+  const all = expandVars(vars);
   const lines: string[] = [];
 
   switch (format) {
     case "dotenv":
-      for (const v of vars) {
+      for (const v of all) {
         lines.push(`${v.key}=${v.value}`);
       }
       break;
 
     case "vercel":
-      for (const v of vars) {
+      for (const v of all) {
         lines.push(`vercel env add ${v.key} production <<< "${v.value}"`);
       }
       break;
 
     case "netlify":
-      for (const v of vars) {
+      for (const v of all) {
         lines.push(`netlify env:set ${v.key} "${v.value}"`);
       }
       break;
