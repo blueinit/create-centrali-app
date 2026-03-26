@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import {
   ClerkProvider,
+  SignedIn,
+  SignedOut,
   SignInButton,
   SignUpButton,
-  Show,
   UserButton,
 } from "@clerk/nextjs";
 import Link from "next/link";
@@ -31,7 +32,7 @@ export default function RootLayout({
               {"{{projectName}}"}
             </Link>
             <nav className="flex items-center gap-4">
-              <Show when="signed-out">
+              <SignedOut>
                 <SignInButton mode="modal">
                   <button className="text-sm text-gray-600 hover:text-gray-900">
                     Sign in
@@ -42,8 +43,8 @@ export default function RootLayout({
                     Get started
                   </button>
                 </SignUpButton>
-              </Show>
-              <Show when="signed-in">
+              </SignedOut>
+              <SignedIn>
                 <Link
                   href="/dashboard"
                   className="text-sm text-gray-600 hover:text-gray-900 no-underline"
@@ -51,7 +52,7 @@ export default function RootLayout({
                   Dashboard
                 </Link>
                 <UserButton />
-              </Show>
+              </SignedIn>
             </nav>
           </header>
           <main>{children}</main>
