@@ -5,23 +5,23 @@ import { useRouter } from "next/navigation";
 
 export function InviteMemberForm({ orgId }: { orgId: string }) {
   const [open, setOpen] = useState(false);
-  const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!userId.trim()) return;
+    if (!email.trim()) return;
 
     setLoading(true);
     try {
       const res = await fetch("/api/members", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orgId, userId: userId.trim() }),
+        body: JSON.stringify({ orgId, email: email.trim() }),
       });
       if (!res.ok) throw new Error("Failed to invite member");
-      setUserId("");
+      setEmail("");
       setOpen(false);
       router.refresh();
     } finally {
@@ -43,10 +43,10 @@ export function InviteMemberForm({ orgId }: { orgId: string }) {
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-2">
       <input
-        type="text"
-        value={userId}
-        onChange={(e) => setUserId(e.target.value)}
-        placeholder="User ID"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email address"
         className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none"
         autoFocus
       />

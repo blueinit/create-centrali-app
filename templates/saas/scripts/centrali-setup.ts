@@ -81,7 +81,8 @@ async function main() {
       recordSlug: "members",
       properties: [
         { name: "orgId", type: "string" as const, required: true },
-        { name: "userId", type: "string" as const, required: true },
+        { name: "userId", type: "string" as const },
+        { name: "email", type: "string" as const },
         { name: "role", type: "string" as const, required: true },
         { name: "status", type: "string" as const, required: true },
         { name: "invitedAt", type: "string" as const },

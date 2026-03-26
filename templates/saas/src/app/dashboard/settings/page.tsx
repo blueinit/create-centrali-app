@@ -66,7 +66,7 @@ export default async function SettingsPage() {
               >
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    {member.data.userId}
+                    {member.data.email ?? member.data.userId}
                   </p>
                   <p className="text-xs text-gray-500">{member.data.role}</p>
                 </div>

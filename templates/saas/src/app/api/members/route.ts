@@ -8,10 +8,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { orgId, userId } = await req.json();
-  if (!orgId || !userId) {
+  const { orgId, email } = await req.json();
+  if (!orgId || !email) {
     return NextResponse.json(
-      { error: "orgId and userId are required" },
+      { error: "orgId and email are required" },
       { status: 400 },
     );
   }
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     const now = new Date().toISOString();
     const result = await client.createRecord("members", {
       orgId,
-      userId,
+      email,
       role: "member",
       status: "invited",
       invitedAt: now,
