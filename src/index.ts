@@ -106,7 +106,7 @@ async function main() {
 
   if (options.template === "saas") {
     console.log(`  ${pc.dim("# Set up your Centrali credentials:")}`);
-    console.log(`  ${pc.cyan("npx create-centrali-app env")}`);
+    console.log(`  ${pc.cyan("npx @centrali-io/create-centrali-app env")}`);
     console.log();
     console.log(`  ${pc.dim("# Create collections, compute functions, and triggers:")}`);
     console.log(`  ${pc.cyan("npm run setup")}`);
@@ -115,7 +115,7 @@ async function main() {
     console.log(`  ${pc.cyan("npm run dev")}`);
   } else {
     console.log(`  ${pc.dim("# Set up your environment variables:")}`);
-    console.log(`  ${pc.cyan("npx create-centrali-app env")}`);
+    console.log(`  ${pc.cyan("npx @centrali-io/create-centrali-app env")}`);
     console.log();
     console.log(`  ${pc.dim("# Or configure manually — see .env.example")}`);
     console.log(`  ${pc.dim("# Create a publishable key: Console > ACCESS > Publishable Keys")}`);
