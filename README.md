@@ -12,6 +12,8 @@ npx @centrali-io/create-centrali-app my-app
 
 ```bash
 # Choose a specific template
+npx @centrali-io/create-centrali-app my-app --template=saas
+npx @centrali-io/create-centrali-app my-app --template=api
 npx @centrali-io/create-centrali-app my-app --template=react-vite
 npx @centrali-io/create-centrali-app my-app --template=nextjs
 
@@ -23,22 +25,25 @@ npx @centrali-io/create-centrali-app my-app --no-typescript
 
 | Template | Description |
 |----------|-------------|
+| **saas** | Next.js 16 + Clerk auth + multi-tenant data + compute functions |
+| **api** | Next.js 16 + REST API with CRUD, filtering, pagination + interactive explorer |
 | **react-vite** | React 19 + Vite + TailwindCSS 4 + Centrali SDK |
-| **nextjs** | Next.js 15 + TailwindCSS 4 + Centrali SDK |
+| **nextjs** | Next.js 16 + TailwindCSS 4 + Centrali SDK |
 
-Both templates include:
+All templates include:
 - Pre-configured Centrali SDK client
 - TailwindCSS 4 styling
 - Environment variable setup (`.env.example`)
-- Example data fetching from a Centrali collection
 - TypeScript by default (with `--no-typescript` opt-out)
+
+The **saas** and **api** templates also include a `centrali-setup` script that provisions collections and seed data in your workspace.
 
 ## After Scaffolding
 
 1. `cd my-app`
 2. `npm install`
-3. Copy `.env.example` to `.env` and add your Centrali credentials
-4. Update the collection recordSlug in the example code
+3. Run `npx @centrali-io/create-centrali-app env` to configure credentials
+4. `npm run setup` (saas and api templates — creates collections and seed data)
 5. `npm run dev`
 
 ## Development
