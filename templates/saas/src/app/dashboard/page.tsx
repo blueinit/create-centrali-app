@@ -9,25 +9,55 @@ export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  const { orgId, isNew } = await ensureWorkspace(userId);
-  const client = createCentraliServerClient();
+  const { orgId, isNew, error } = await ensureWorkspace(userId);
 
-  const orgRes = await client.queryRecords("organizations", {
-    "data.ownerId": userId,
-    pageSize: 1,
-  });
-  const org = orgRes?.data?.[0];
+  if (error || !orgId) {
+    return (
+      <div className="mx-auto max-w-3xl px-6 py-10">
+        <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+          <p className="font-medium">Something went wrong setting up your workspace.</p>
+          <p className="mt-1">
+            Make sure your Centrali credentials are configured in{" "}
+            <code className="rounded bg-yellow-100 px-1">.env.local</code> and
+            that you&apos;ve run{" "}
+            <code className="rounded bg-yellow-100 px-1">npm run setup</code>.
+          </p>
+          <p className="mt-2 text-xs text-yellow-600">
+            Try refreshing the page. If the problem persists, check the server
+            logs.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-  const membersRes = await client.queryRecords("members", {
-    "data.orgId": orgId,
-  });
-  const memberCount = membersRes?.data?.length ?? 0;
+  let org: any = null;
+  let memberCount = 0;
+  let projects: any[] = [];
 
-  const projectsRes = await client.queryRecords("projects", {
-    "data.orgId": orgId,
-    sort: "-createdAt",
-  });
-  const projects = projectsRes?.data ?? [];
+  try {
+    const client = createCentraliServerClient();
+
+    const [orgRes, membersRes, projectsRes] = await Promise.all([
+      client.queryRecords("organizations", {
+        "data.ownerId": userId,
+        pageSize: 1,
+      }),
+      client.queryRecords("members", {
+        "data.orgId": orgId,
+      }),
+      client.queryRecords("projects", {
+        "data.orgId": orgId,
+        sort: "-createdAt",
+      }),
+    ]);
+
+    org = orgRes?.data?.[0];
+    memberCount = membersRes?.data?.length ?? 0;
+    projects = projectsRes?.data ?? [];
+  } catch {
+    // Queries failed — render with defaults rather than crashing
+  }
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10 space-y-8">
