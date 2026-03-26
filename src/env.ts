@@ -4,7 +4,7 @@ import prompts from "prompts";
 import pc from "picocolors";
 
 type Format = "dotenv" | "vercel" | "netlify";
-type TemplateType = "react-vite" | "nextjs" | "saas" | "unknown";
+type TemplateType = "react-vite" | "nextjs" | "saas" | "api" | "unknown";
 
 interface EnvVar {
   key: string;
@@ -25,6 +25,7 @@ function detectTemplate(): TemplateType {
   const deps = { ...pkg.dependencies, ...pkg.devDependencies };
 
   if (deps["@clerk/nextjs"]) return "saas";
+  if (deps["next"] && pkg.scripts?.setup) return "api";
   if (deps["next"]) return "nextjs";
   if (deps["vite"] || deps["@vitejs/plugin-react"]) return "react-vite";
   return "unknown";
@@ -56,7 +57,7 @@ function readExistingEnv(): Record<string, string> {
 
 /** Get the env var definitions for a template */
 function getVarDefs(template: TemplateType): EnvVar[] {
-  if (template === "nextjs" || template === "saas") {
+  if (template === "nextjs" || template === "saas" || template === "api") {
     return [
       { key: "NEXT_PUBLIC_CENTRALI_API_URL", value: "https://centrali.io", description: "Centrali API URL", secret: false, mirrors: "CENTRALI_API_URL" },
       { key: "NEXT_PUBLIC_CENTRALI_WORKSPACE", value: "", description: "Workspace slug", secret: false, mirrors: "CENTRALI_WORKSPACE" },
@@ -163,6 +164,7 @@ export async function envCommand(args: string[]) {
       nextjs: "Next.js",
       "react-vite": "React + Vite",
       saas: "SaaS Starter",
+      api: "API Starter",
     };
     console.log(`Detected template: ${pc.cyan(templateNames[template] ?? template)}\n`);
   }
