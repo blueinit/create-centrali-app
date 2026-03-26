@@ -1,6 +1,6 @@
 {
   "name": "@centrali-io/create-centrali-app",
-  "version": "1.0.2",
+  "version": "0.1.0",
   "description": "Create a new Centrali-powered app with one command",
   "bin": {
     "create-centrali-app": "./dist/index.js"
