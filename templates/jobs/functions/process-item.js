@@ -1,9 +1,10 @@
-module.exports = async (ctx) => {
-  const record = ctx.event?.record ?? ctx.executionParams;
-  const itemId = record?.id;
-  const itemData = record?.data;
+async function run() {
+  const event = executionParams;
+  const itemId = event?.recordId;
+  const itemData = event?.data;
 
-  console.log("[process-item] Processing:", {
+  api.log({
+    message: "Processing item",
     id: itemId,
     title: itemData?.title,
     type: itemData?.type,
@@ -37,4 +38,4 @@ module.exports = async (ctx) => {
   });
 
   return { success: true, itemId, status: "completed" };
-};
+}

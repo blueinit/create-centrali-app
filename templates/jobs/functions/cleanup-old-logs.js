@@ -1,11 +1,11 @@
-module.exports = async (ctx) => {
-  console.log("[cleanup-old-logs] Starting cleanup...");
+async function run() {
+  api.log({ message: "Starting cleanup of old logs" });
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
   // Find old log entries
   const oldLogs = await api.queryRecords("job-logs", {
-    "createdAt[lte]": sevenDaysAgo,
+    filter: { "createdAt[lte]": sevenDaysAgo },
     pageSize: 100,
   });
 
@@ -17,7 +17,7 @@ module.exports = async (ctx) => {
       await api.deleteRecord(record.id, true);
       deletedCount++;
     } catch (err) {
-      console.warn(`[cleanup-old-logs] Failed to delete ${record.id}:`, err.message);
+      api.log({ message: `Failed to delete ${record.id}`, error: err.message });
     }
   }
 
@@ -30,7 +30,7 @@ module.exports = async (ctx) => {
     createdAt: new Date().toISOString(),
   });
 
-  console.log(`[cleanup-old-logs] Deleted ${deletedCount} records`);
+  api.log({ message: `Deleted ${deletedCount} records` });
 
   return { success: true, deletedCount };
-};
+}

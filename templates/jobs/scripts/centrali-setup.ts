@@ -149,7 +149,7 @@ async function main() {
       executionType: "event-driven" as const,
       description: "Fires when a new item is created",
       triggerMetadata: {
-        event: "record.created",
+        event: "record_created",
         recordSlug: "processed-items",
       },
     },

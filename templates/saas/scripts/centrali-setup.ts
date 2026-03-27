@@ -149,7 +149,7 @@ async function main() {
       functionId,
       executionType: "event-driven",
       triggerMetadata: {
-        event: "record.created",
+        event: "record_created",
         recordSlug: "members",
       },
     });

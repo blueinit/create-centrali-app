@@ -1,7 +1,8 @@
-module.exports = async (ctx) => {
-  const record = ctx.event?.record ?? ctx.executionParams;
+async function run() {
+  const record = executionParams;
 
-  console.log("[on-member-invited] New member added:", {
+  api.log({
+    message: "New member added",
     orgId: record?.data?.orgId,
     email: record?.data?.email,
     role: record?.data?.role,
@@ -17,8 +18,8 @@ module.exports = async (ctx) => {
     //     body: { email_address: email, redirect_url: "https://yourapp.com/sign-up" },
     //   });
 
-    console.log(`[on-member-invited] TODO: send invite email to ${email}`);
+    api.log({ message: `TODO: send invite email to ${email}` });
   }
 
   return { success: true, message: "Member invitation processed." };
-};
+}
