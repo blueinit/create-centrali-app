@@ -80,8 +80,9 @@ function stripTypeAnnotations(content: string): string {
   content = content.replace(/\s+as\s+const\b/g, "");
   // Remove `as Type` casts
   content = content.replace(/\s+as\s+\w+/g, "");
-  // Remove generic type params: <any>, <any[]>, <string | null>, <{ id: string }>, <Record<...>>, etc.
-  content = content.replace(/<(?:[^<>]|<[^<>]*>)*>/g, "");
+  // Remove generic type params after identifiers: useState<any>, Promise<...>, Record<...>, etc.
+  // Only match <...> preceded by a word char, where content doesn't start with / (not closing JSX tags)
+  content = content.replace(/(\w)<(?=[^/])(?:[^<>]|<[^<>]*>)*>/g, "$1");
   // Remove destructured param type annotations: `{ params }: { params: Promise }` → `{ params }`
   content = content.replace(/}\s*:\s*\{[^}]*}/g, "}");
   // Remove inline type annotations: `: string`, `: Record`, `: any`, `: number | null`, etc.
