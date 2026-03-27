@@ -14,6 +14,7 @@ npx @centrali-io/create-centrali-app my-app
 # Choose a specific template
 npx @centrali-io/create-centrali-app my-app --template=saas
 npx @centrali-io/create-centrali-app my-app --template=api
+npx @centrali-io/create-centrali-app my-app --template=jobs
 npx @centrali-io/create-centrali-app my-app --template=react-vite
 npx @centrali-io/create-centrali-app my-app --template=nextjs
 
@@ -27,6 +28,7 @@ npx @centrali-io/create-centrali-app my-app --no-typescript
 |----------|-------------|
 | **saas** | Next.js 16 + Clerk auth + multi-tenant data + compute functions |
 | **api** | Next.js 16 + REST API with CRUD, filtering, pagination + interactive explorer |
+| **jobs** | Next.js 16 + Compute functions + scheduled/event triggers + monitoring dashboard |
 | **react-vite** | React 19 + Vite + TailwindCSS 4 + Centrali SDK |
 | **nextjs** | Next.js 16 + TailwindCSS 4 + Centrali SDK |
 
@@ -36,7 +38,7 @@ All templates include:
 - Environment variable setup (`.env.example`)
 - TypeScript by default (with `--no-typescript` opt-out)
 
-The **saas** and **api** templates also include a `centrali-setup` script that provisions collections and seed data in your workspace.
+The **saas**, **api**, and **jobs** templates also include a `centrali-setup` script that provisions collections and seed data in your workspace.
 
 ## After Scaffolding
 

@@ -4,7 +4,7 @@ import prompts from "prompts";
 import pc from "picocolors";
 
 type Format = "dotenv" | "vercel" | "netlify";
-type TemplateType = "react-vite" | "nextjs" | "saas" | "api" | "unknown";
+type TemplateType = "react-vite" | "nextjs" | "saas" | "api" | "jobs" | "unknown";
 
 interface EnvVar {
   key: string;
@@ -57,7 +57,7 @@ function readExistingEnv(): Record<string, string> {
 
 /** Get the env var definitions for a template */
 function getVarDefs(template: TemplateType): EnvVar[] {
-  if (template === "nextjs" || template === "saas" || template === "api") {
+  if (template === "nextjs" || template === "saas" || template === "api" || template === "jobs") {
     return [
       { key: "NEXT_PUBLIC_CENTRALI_API_URL", value: "https://centrali.io", description: "Centrali API URL", secret: false, mirrors: "CENTRALI_API_URL" },
       { key: "NEXT_PUBLIC_CENTRALI_WORKSPACE", value: "", description: "Workspace slug", secret: false, mirrors: "CENTRALI_WORKSPACE" },
@@ -165,6 +165,7 @@ export async function envCommand(args: string[]) {
       "react-vite": "React + Vite",
       saas: "SaaS Starter",
       api: "API Starter",
+      jobs: "Jobs Starter",
     };
     console.log(`Detected template: ${pc.cyan(templateNames[template] ?? template)}\n`);
   }

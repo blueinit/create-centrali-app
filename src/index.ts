@@ -10,6 +10,7 @@ import { envCommand } from "./env.js";
 const TEMPLATES = [
   { title: "SaaS Starter (Next.js + Clerk + Centrali)", value: "saas" },
   { title: "API Starter (Next.js + Centrali)", value: "api" },
+  { title: "Jobs Starter (Next.js + Centrali)", value: "jobs" },
   { title: "React + Vite", value: "react-vite" },
   { title: "Next.js", value: "nextjs" },
 ] as const;
@@ -105,7 +106,16 @@ async function main() {
   console.log(`  ${pc.cyan("npm install")}`);
   console.log();
 
-  if (options.template === "api") {
+  if (options.template === "jobs") {
+    console.log(`  ${pc.dim("# Set up your Centrali credentials:")}`);
+    console.log(`  ${pc.cyan("npx @centrali-io/create-centrali-app env")}`);
+    console.log();
+    console.log(`  ${pc.dim("# Create functions, triggers, and seed data:")}`);
+    console.log(`  ${pc.cyan("npm run setup")}`);
+    console.log();
+    console.log(`  ${pc.dim("# Start the app:")}`);
+    console.log(`  ${pc.cyan("npm run dev")}`);
+  } else if (options.template === "api") {
     console.log(`  ${pc.dim("# Set up your Centrali credentials:")}`);
     console.log(`  ${pc.cyan("npx @centrali-io/create-centrali-app env")}`);
     console.log();
