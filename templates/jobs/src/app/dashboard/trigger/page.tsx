@@ -68,7 +68,8 @@ export default function TriggerPage() {
             const status = statusJson.data;
             setJobStatus(status);
 
-            if (status?.status === "completed" || status?.status === "failed") {
+            const s = status?.status ?? status?.state;
+            if (s === "completed" || s === "failed") {
               if (pollingRef.current) clearInterval(pollingRef.current);
               pollingRef.current = null;
               setInvoking(false);
@@ -222,33 +223,37 @@ export default function TriggerPage() {
             </p>
           )}
 
-          {jobStatus && (
+          {jobStatus && (() => {
+            const s = jobStatus.status ?? jobStatus.state;
+            const result = jobStatus.returnValue?.outputs ?? jobStatus.returnValue;
+            return (
             <>
               <div className="flex items-center gap-2">
-                {(jobStatus.status === "queued" || jobStatus.status === "running") && (
+                {(s === "queued" || s === "running") && (
                   <span className="h-3 w-3 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
                 )}
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor(jobStatus.status === "failed" ? "failure" : jobStatus.status)}`}>
-                  {jobStatus.status}
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor(s === "failed" ? "failure" : s)}`}>
+                  {s}
                 </span>
               </div>
 
-              {jobStatus.status === "completed" && jobStatus.returnValue != null && (
+              {s === "completed" && result != null && (
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Result:</p>
                   <pre className="max-h-64 overflow-auto rounded-lg border border-gray-200 bg-gray-900 p-3 text-sm text-green-400">
-                    {JSON.stringify(jobStatus.returnValue, null, 2)}
+                    {JSON.stringify(result, null, 2)}
                   </pre>
                 </div>
               )}
 
-              {jobStatus.status === "failed" && jobStatus.failedReason && (
+              {s === "failed" && jobStatus.failedReason && (
                 <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                   {jobStatus.failedReason}
                 </div>
               )}
             </>
-          )}
+          );
+          })()}
         </div>
       )}
     </div>
