@@ -15,7 +15,10 @@ export async function GET(
   try {
     const client = createCentraliServerClient();
     const result = await client.runs.listByFunction(id, { page, limit, status: status as any });
-    return NextResponse.json(result.data ?? { data: [], meta: { page, pageSize: limit, total: 0 } });
+    return NextResponse.json({
+      data: result.data ?? [],
+      meta: result.meta ?? { page, pageSize: limit, total: 0 },
+    });
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message ?? "Failed to fetch runs" },
