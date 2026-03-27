@@ -74,11 +74,21 @@ function stripTypeAnnotations(content: string): string {
   content = content.replace(/^import\s+type\s+.*;\n/gm, "");
   // Remove type-only imports from mixed import statements
   content = content.replace(/,\s*type\s+\w+/g, "");
-  // Remove inline type annotations (`: string`, `: number`, etc.)
-  content = content.replace(/:\s*\w+(\[\])?\s*(?=[=,)\n;{])/g, "");
+  // Remove type export statements (export type/interface)
+  content = content.replace(/^export\s+(?:type|interface)\s+[^]*?(?:^};\n|;\n)/gm, "");
+  // Remove `as const` assertions
+  content = content.replace(/\s+as\s+const\b/g, "");
   // Remove `as Type` casts
   content = content.replace(/\s+as\s+\w+/g, "");
-  // Remove generic type params `<Type>`
-  content = content.replace(/<[A-Z]\w*(?:,\s*[A-Z]\w*)*>/g, "");
+  // Remove generic type params: <any>, <any[]>, <string | null>, <{ id: string }>, <Record<...>>, etc.
+  content = content.replace(/<(?:[^<>]|<[^<>]*>)*>/g, "");
+  // Remove destructured param type annotations: `{ params }: { params: Promise }` → `{ params }`
+  content = content.replace(/}\s*:\s*\{[^}]*}/g, "}");
+  // Remove inline type annotations: `: string`, `: Record`, `: any`, `: number | null`, etc.
+  content = content.replace(/:\s*(?:\w+(?:\[\])?(?:\s*\|\s*\w+(?:\[\])?)*)\s*(?=[=,)\n;{])/g, "");
+  // Remove catch clause type annotations: `catch (err: any)` → `catch (err)`
+  content = content.replace(/\bcatch\s*\((\w+):\s*\w+\)/g, "catch ($1)");
+  // Remove non-null assertions: `foo!.bar` → `foo.bar`, `foo!;` → `foo;`
+  content = content.replace(/(\w)\!(\.|;|\)|\,|\s)/g, "$1$2");
   return content;
 }

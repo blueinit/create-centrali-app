@@ -114,7 +114,7 @@ async function main() {
   let functionId: string;
 
   if (fnMap.has("on-member-invited")) {
-    const existing = fnMap.get("on-member-invited")!;
+    const existing = fnMap.get("on-member-invited");
     functionId = existing.id;
     // Always update code so local changes are pushed
     await client.functions.update(functionId, {

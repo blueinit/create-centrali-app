@@ -108,13 +108,13 @@ async function main() {
     { name: "cleanup-old-logs", description: "Deletes log entries older than 7 days", timeoutMs: 60000 },
   ];
 
-  const functionIds: Record<string, string> = {};
+  const functionIds = {} as any;
 
   for (const def of functionDefs) {
     const code = readFunctionCode(def.name);
 
     if (fnMap.has(def.name)) {
-      const existing = fnMap.get(def.name)!;
+      const existing = fnMap.get(def.name);
       functionIds[def.name] = existing.id;
       await client.functions.update(existing.id, {
         code,
@@ -182,18 +182,21 @@ async function main() {
       functionId: functionIds["process-item"],
       executionType: "on-demand" as const,
       description: "Manually trigger item processing",
+      triggerMetadata: { params: {} },
     },
     {
       name: "generate-report-manual",
       functionId: functionIds["generate-report"],
       executionType: "on-demand" as const,
       description: "Manually generate a report",
+      triggerMetadata: { params: {} },
     },
     {
       name: "cleanup-old-logs-manual",
       functionId: functionIds["cleanup-old-logs"],
       executionType: "on-demand" as const,
       description: "Manually run log cleanup",
+      triggerMetadata: { params: {} },
     },
   ];
 
