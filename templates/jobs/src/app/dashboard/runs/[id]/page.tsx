@@ -82,24 +82,24 @@ export default function RunDetailPage() {
       </div>
 
       {/* Resource usage */}
-      {(run.memoryUsageBytes || run.cpuUsageSeconds) && (
+      {(run.memoryUsage || run.cpuUsage) && (
         <div className="rounded-xl border border-gray-200 bg-white p-5">
           <h2 className="text-sm font-semibold text-gray-900 mb-3">Resource Usage</h2>
           <div className="grid grid-cols-2 gap-4 text-sm">
-            {run.memoryUsageBytes && (
+            {run.memoryUsage?.rss && (
               <div>
-                <p className="text-gray-500">Memory</p>
+                <p className="text-gray-500">Memory (RSS)</p>
                 <p className="text-gray-900">
-                  {run.memoryUsageBytes > 1048576
-                    ? `${(run.memoryUsageBytes / 1048576).toFixed(1)} MB`
-                    : `${(run.memoryUsageBytes / 1024).toFixed(0)} KB`}
+                  {run.memoryUsage.rss > 1048576
+                    ? `${(run.memoryUsage.rss / 1048576).toFixed(1)} MB`
+                    : `${(run.memoryUsage.rss / 1024).toFixed(0)} KB`}
                 </p>
               </div>
             )}
-            {run.cpuUsageSeconds && (
+            {run.cpuUsage?.user != null && (
               <div>
                 <p className="text-gray-500">CPU Time</p>
-                <p className="text-gray-900">{run.cpuUsageSeconds.toFixed(2)}s</p>
+                <p className="text-gray-900">{(run.cpuUsage.user / 1000).toFixed(1)}ms</p>
               </div>
             )}
           </div>
