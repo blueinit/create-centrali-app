@@ -102,12 +102,10 @@ export function ListTasks() {
         <div>
           <label className={labelClass}>Sort</label>
           <select value={sort} onChange={(e) => setSort(e.target.value)} className={inputClass + " w-full"}>
-            {SORTABLE_FIELDS.map((f) => (
-              <>
-                <option key={f} value={`-${f}`}>{f} (newest first)</option>
-                <option key={`${f}-asc`} value={f}>{f} (oldest first)</option>
-              </>
-            ))}
+            {SORTABLE_FIELDS.flatMap((f) => [
+              <option key={`${f}-desc`} value={`-${f}`}>{f} (newest first)</option>,
+              <option key={`${f}-asc`} value={f}>{f} (oldest first)</option>,
+            ])}
           </select>
         </div>
       </div>
