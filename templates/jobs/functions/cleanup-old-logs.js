@@ -3,13 +3,16 @@ async function run() {
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-  // Find old log entries
+  // Find old log entries using dateWindow for the createdAt system field
   const oldLogs = await api.queryRecords("job-logs", {
-    filter: { "createdAt[lte]": sevenDaysAgo },
+    dateWindow: {
+      field: "createdAt",
+      to: sevenDaysAgo,
+    },
     pageSize: 100,
   });
 
-  const records = oldLogs?.data ?? [];
+  const records = oldLogs?.items ?? [];
   let deletedCount = 0;
 
   for (const record of records) {

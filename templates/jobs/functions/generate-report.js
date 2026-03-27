@@ -3,24 +3,24 @@ async function run() {
 
   // Count processed items by status
   const completed = await api.queryRecords("processed-items", {
-    filter: { status: "completed" },
+    filter: { "data.status": "completed" },
     pageSize: 1,
     includeTotal: true,
   });
   const failed = await api.queryRecords("processed-items", {
-    filter: { status: "failed" },
+    filter: { "data.status": "failed" },
     pageSize: 1,
     includeTotal: true,
   });
   const pending = await api.queryRecords("processed-items", {
-    filter: { status: "pending" },
+    filter: { "data.status": "pending" },
     pageSize: 1,
     includeTotal: true,
   });
 
-  const completedCount = completed?.meta?.total ?? 0;
-  const failedCount = failed?.meta?.total ?? 0;
-  const pendingCount = pending?.meta?.total ?? 0;
+  const completedCount = completed?.total ?? 0;
+  const failedCount = failed?.total ?? 0;
+  const pendingCount = pending?.total ?? 0;
 
   const report = {
     completed: completedCount,
