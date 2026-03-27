@@ -9,7 +9,7 @@
     "setup": "tsx scripts/centrali-setup"
   },
   "dependencies": {
-    "@centrali-io/centrali-sdk": "^4.4.5",
+    "@centrali-io/centrali-sdk": "^4.4.6",
     "next": "^16.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
