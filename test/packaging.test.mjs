@@ -216,6 +216,65 @@ test("the nextjs template never calls the publishable-key client", () => {
   assert.deepEqual(offenders, [], `these files use the publishable-key client: ${offenders}`);
 });
 
+test("every Clerk entry point in the saas template is gated on authConfigured", () => {
+  // ClerkProvider, clerkMiddleware, auth() and the Clerk UI components all
+  // throw "Missing publishableKey" the moment they run without a key. Ungating
+  // any one of them breaks `next build` for a project with no Clerk account —
+  // and clerkMiddleware in particular takes down every route at runtime,
+  // including the marketing page.
+  const dir = path.join(repoRoot, "templates", "saas", "src");
+  const ungated = [];
+  const walk = (d) => {
+    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
+      const p = path.join(d, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (/\.tsx?$/.test(entry.name)) {
+        const body = fs.readFileSync(p, "utf-8");
+        if (body.includes("@clerk/nextjs") && !body.includes("authConfigured")) {
+          ungated.push(path.relative(repoRoot, p));
+        }
+      }
+    }
+  };
+  walk(dir);
+  assert.deepEqual(ungated, [], `these files use Clerk without a gate: ${ungated}`);
+});
+
+test("saas routes opt out of static prerendering", () => {
+  const body = fs.readFileSync(
+    path.join(repoRoot, "templates", "saas", "src", "app", "layout.tsx"),
+    "utf-8",
+  );
+  assert.match(
+    body,
+    /export const dynamic = "force-dynamic"/,
+    'templates/saas/src/app/layout.tsx must set dynamic = "force-dynamic"',
+  );
+});
+
+test("the saas project ignores Clerk's keyless credential file", () => {
+  // The first `npm run dev` writes .clerk/.tmp/keyless.json, which holds a
+  // temporary Clerk app's publishable key AND secret key. The documented flow
+  // is scaffold → dev → git init → git add ., so this must be ignored.
+  withTmpDir((tmp) => {
+    const project = scaffoldInto(tmp, "saas");
+    execFileSync("git", ["init", "-q", "."], { cwd: project, stdio: "ignore" });
+    fs.mkdirSync(path.join(project, ".clerk", ".tmp"), { recursive: true });
+    fs.writeFileSync(
+      path.join(project, ".clerk", ".tmp", "keyless.json"),
+      JSON.stringify({ publishableKey: "pk_test_synthetic", secretKey: "sk_test_synthetic" }),
+    );
+    const status = execFileSync("git", ["status", "--porcelain"], {
+      cwd: project,
+      encoding: "utf-8",
+    });
+    assert.ok(
+      !status.includes(".clerk"),
+      "saas: Clerk's keyless credential file is not git-ignored",
+    );
+  });
+});
+
 test("nextjs server pages opt out of static prerendering", () => {
   // Without force-dynamic, `next build` bakes the credential-less "Get
   // started" screen into static HTML, and a correctly configured production

@@ -1,12 +1,17 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { authConfigured } from "@/lib/auth";
+import { AuthSetupNotice } from "@/app/AuthSetupNotice";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // auth() throws without a Clerk key, so there is nobody to sign in as.
+  if (!authConfigured) return <AuthSetupNotice />;
+
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
