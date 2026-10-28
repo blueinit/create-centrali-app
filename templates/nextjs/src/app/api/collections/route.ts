@@ -1,23 +1,59 @@
 import { NextResponse } from "next/server";
-import { createCentraliClient } from "@/lib/centrali";
+import { createCentraliServerClient } from "@/lib/centrali";
+import { describeCentraliError, statusFor } from "@/lib/errors";
 
+/**
+ * Create a collection.
+ *
+ * Uses the server-side service account. A publishable key cannot do this —
+ * the platform rejects every non-GET /collections request made with one, and
+ * `collections:create` is not an expressible publishable-key scope. Do not
+ * swap this for the browser client to "make it work"; broaden nothing.
+ *
+ * LOCAL DEMO: this route has no application-level access check. Add your own
+ * authentication before exposing it publicly.
+ */
 export async function POST(request: Request) {
+  let body: { name?: unknown; recordSlug?: unknown };
   try {
-    const body = await request.json();
-    const centrali = createCentraliClient();
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Request body must be valid JSON" }, { status: 400 });
+  }
+
+  const name = typeof body.name === "string" ? body.name.trim() : "";
+  const recordSlug = typeof body.recordSlug === "string" ? body.recordSlug.trim() : "";
+
+  if (!name) {
+    return NextResponse.json({ error: "name is required" }, { status: 400 });
+  }
+  if (!/^[a-z0-9][a-z0-9_-]*$/.test(recordSlug)) {
+    return NextResponse.json(
+      {
+        error:
+          "recordSlug is required and must start with a letter or digit and contain only " +
+          "lowercase letters, digits, hyphens or underscores",
+      },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const centrali = createCentraliServerClient();
     const result = await centrali.collections.create({
-      name: body.name,
-      recordSlug: body.recordSlug,
+      name,
+      recordSlug,
       properties: [
-        { name: "name", type: "string" },
+        { name: "name", type: "string", required: true },
         { name: "description", type: "string" },
       ],
-    } as any);
-    return NextResponse.json(result.data);
+      schemaDiscoveryMode: "strict",
+    });
+    return NextResponse.json(result.data, { status: 201 });
   } catch (err: any) {
     return NextResponse.json(
-      { error: err.message ?? "Failed to create collection" },
-      { status: 400 },
+      { error: describeCentraliError(err, "create a collection") },
+      { status: statusFor(err) },
     );
   }
 }

@@ -13,6 +13,21 @@ const TS_TO_JS: Record<string, string> = {
   ".tsx": ".jsx",
 };
 
+// Template files that must be renamed on copy.
+//
+// npm unconditionally excludes files named `.gitignore` from published
+// tarballs, regardless of the `files` field. Templates therefore store the
+// file as `gitignore` and we restore the leading dot here, so a generated
+// project ignores `.env.local` and build output even when the CLI runs from
+// the published package rather than a source checkout.
+//
+// Keep this in sync with the template filenames — test/packaging.test.mjs
+// asserts both that the tarball carries `gitignore` and that scaffolding
+// produces `.gitignore`.
+const RENAME_ON_COPY: Record<string, string> = {
+  gitignore: ".gitignore",
+};
+
 export function scaffold(projectName: string, template: string, typescript: boolean): void {
   const templateDir = path.join(TEMPLATE_DIR, template);
   const targetDir = path.resolve(process.cwd(), projectName);
@@ -24,6 +39,23 @@ export function scaffold(projectName: string, template: string, typescript: bool
 
   fs.mkdirSync(targetDir, { recursive: true });
   copyDir(templateDir, targetDir, projectName, typescript);
+  stampTemplate(targetDir, template);
+}
+
+/**
+ * Record which template generated this project.
+ *
+ * The `env` subcommand needs to know which variables a project actually uses.
+ * Inferring that from the dependency list is fragile — "has next and a setup
+ * script" used to mean the api template until the nextjs template gained its
+ * own setup script. An explicit marker cannot drift.
+ */
+function stampTemplate(targetDir: string, template: string): void {
+  const pkgPath = path.join(targetDir, "package.json");
+  if (!fs.existsSync(pkgPath)) return;
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+  pkg.centrali = { ...pkg.centrali, template };
+  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
 }
 
 function copyDir(src: string, dest: string, projectName: string, typescript: boolean): void {
@@ -58,6 +90,11 @@ function copyDir(src: string, dest: string, projectName: string, typescript: boo
           }
         }
         continue;
+      }
+
+      // Restore dotfile names that npm strips from published tarballs
+      if (RENAME_ON_COPY[destName]) {
+        destName = RENAME_ON_COPY[destName];
       }
 
       // Rename extensions in JS mode
