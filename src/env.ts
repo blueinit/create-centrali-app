@@ -95,7 +95,7 @@ function isPlaceholder(value: string): boolean {
 const SERVER_VARS: EnvVar[] = [
   { key: "CENTRALI_API_URL", value: "https://centrali.io", description: "Centrali API URL", secret: false },
   { key: "CENTRALI_WORKSPACE", value: "", description: "Workspace slug", secret: false },
-  { key: "CENTRALI_CLIENT_ID", value: "", description: "Service account client ID (ci_...)", secret: false },
+  { key: "CENTRALI_CLIENT_ID", value: "", description: "Service account client ID (sa_...)", secret: false },
   { key: "CENTRALI_CLIENT_SECRET", value: "", description: "Service account secret (sk_...)", secret: true },
 ];
 
