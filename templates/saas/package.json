@@ -9,7 +9,7 @@
     "setup": "tsx scripts/centrali-setup"
   },
   "dependencies": {
-    "@centrali-io/centrali-sdk": "^4.4.7",
+    "@centrali-io/centrali-sdk": "^9.5.2",
     "@clerk/nextjs": "^6",
     "next": "^16.0.0",
     "react": "^19.0.0",
@@ -18,7 +18,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.0.0",
-    "@types/qs": "^6",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.20",
@@ -26,5 +25,8 @@
     "tailwindcss": "^4.0.0",
     "tsx": "^4",
     "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   }
 }

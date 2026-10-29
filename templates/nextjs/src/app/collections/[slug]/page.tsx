@@ -1,6 +1,11 @@
-import { createCentraliClient } from "@/lib/centrali";
+import { createCentraliServerClient } from "@/lib/centrali";
+import { describeCentraliError } from "@/lib/errors";
 import Link from "next/link";
 import { CreateRecordForm } from "./CreateRecordForm";
+
+// Read credentials and records at request time, so a record created a moment
+// ago is visible on refresh rather than served from a build-time snapshot.
+export const dynamic = "force-dynamic";
 
 export default async function CollectionPage({
   params,
@@ -14,13 +19,22 @@ export default async function CollectionPage({
   let error: string | null = null;
 
   try {
-    const centrali = createCentraliClient();
+    const centrali = createCentraliServerClient();
     const colRes = await centrali.collections.getBySlug(slug);
     collection = colRes.data;
-    const recRes = await centrali.queryRecords(slug);
+    // Canonical query form. `queryRecords(slug)` still works via the SDK's
+    // legacy GET adapter but emits a deprecation warning, so pass a
+    // QueryDefinition instead. Shape is validated client-side by the SDK
+    // before any request is made: `sort` is SortClause[] and `page` takes
+    // `limit`/`offset` (not `size`).
+    const recRes = await centrali.records.query(slug, {
+      resource: slug,
+      sort: [{ field: "createdAt", direction: "desc" }],
+      page: { limit: 100 },
+    });
     records = recRes?.data ?? [];
   } catch (err: any) {
-    error = err.message ?? "Failed to load collection";
+    error = describeCentraliError(err, `read records in "${slug}"`);
   }
 
   if (error) {

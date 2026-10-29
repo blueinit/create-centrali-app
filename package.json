@@ -1,6 +1,6 @@
 {
   "name": "@centrali-io/create-centrali-app",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "description": "Create a new Centrali-powered app with one command",
   "bin": {
     "create-centrali-app": "./dist/index.js"
@@ -13,7 +13,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test": "node --test test/*.test.mjs"
   },
   "keywords": [
     "centrali",
@@ -41,5 +42,8 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   }
 }

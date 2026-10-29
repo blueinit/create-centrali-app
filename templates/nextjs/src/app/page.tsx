@@ -1,21 +1,31 @@
-import { createCentraliClient } from "@/lib/centrali";
+import { createCentraliServerClient, hasCentraliCredentials } from "@/lib/centrali";
+import { describeCentraliError } from "@/lib/errors";
 import Link from "next/link";
 import { CreateCollectionForm } from "./CreateCollectionForm";
 
-export default async function Home() {
-  const isConfigured =
-    process.env.CENTRALI_WORKSPACE && process.env.CENTRALI_CLIENT_ID;
+// Credentials are read from the environment at request time, not at build
+// time. Without this, `next build` prerenders this route as static HTML — so a
+// build that ran before the environment was configured would keep serving the
+// "Get started" screen even after valid credentials were supplied.
+export const dynamic = "force-dynamic";
 
-  if (!isConfigured) {
+export default async function Home() {
+  if (!hasCentraliCredentials()) {
     return (
       <Shell>
         <Card>
           <h2 className="text-lg font-semibold text-gray-900">Get started</h2>
           <ol className="mt-4 list-inside list-decimal space-y-2 text-gray-600">
             <li>
-              Copy <Code>.env.example</Code> to <Code>.env</Code>
+              Copy <Code>.env.example</Code> to <Code>.env.local</Code>
             </li>
-            <li>Add your workspace slug and service account credentials</li>
+            <li>
+              Set <Code>CENTRALI_WORKSPACE</Code>, <Code>CENTRALI_CLIENT_ID</Code> and{" "}
+              <Code>CENTRALI_CLIENT_SECRET</Code>
+            </li>
+            <li>
+              Run <Code>npm run setup</Code> to create the demo collection
+            </li>
             <li>Restart the dev server</li>
           </ol>
           <p className="mt-4 text-sm text-gray-500">
@@ -23,20 +33,21 @@ export default async function Home() {
             <a href="https://centrali.io" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
               Centrali console
             </a>
-            {" "}&rarr; Settings &rarr; Service Accounts, then add it to the{" "}
-            <strong>workspace_administrators</strong> or <strong>workspace_developers</strong> group.
+            {" "}&rarr; ACCESS &rarr; Service Accounts, then add it to the{" "}
+            <strong>workspace_administrators</strong> or <strong>workspace_developers</strong> group so
+            it can create collections.
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            Prefer not to type secrets by hand? Run{" "}
+            <Code>npx @centrali-io/create-centrali-app env</Code>.
           </p>
           <p className="mt-2 text-xs text-gray-400">
-            Once your app is built, you can switch to your own auth provider and pass user tokens instead.
-            See the{" "}
-            <a href="https://docs.centrali.dev/resources/why-centrali#bring-your-own-token-byot" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
-              BYOT docs
+            Once your app needs per-user access, you can keep this server-side path and add your own
+            auth provider on top, passing user tokens to the SDK. See the{" "}
+            <a href="https://docs.centrali.io/authentication/external-auth/" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
+              external auth (BYOT) docs
             </a>
-            {" "}or{" "}
-            <a href="https://centrali.io/blog/byot-bring-your-own-token-external-idp" className="text-blue-600 hover:underline" target="_blank" rel="noopener">
-              blog post
-            </a>
-            {" "}for details.
+            .
           </p>
         </Card>
       </Shell>
@@ -47,11 +58,14 @@ export default async function Home() {
   let error: string | null = null;
 
   try {
-    const centrali = createCentraliClient();
+    const centrali = createCentraliServerClient();
     const res = await centrali.collections.list();
     collections = res.data ?? [];
   } catch (err: any) {
-    error = err.message ?? "Failed to fetch collections";
+    // The SDK's own message is only ever "Request failed with status code
+    // 401" — route credential and permission failures through the shared
+    // helper so the first-run problem is actually diagnosable.
+    error = describeCentraliError(err, "list collections");
   }
 
   return (
@@ -69,7 +83,7 @@ export default async function Home() {
           <div className="text-center py-8">
             <p className="text-gray-500">No collections yet.</p>
             <p className="mt-1 text-sm text-gray-400">
-              Create your first collection to start building.
+              Run <Code>npm run setup</Code>, or create one with the form above.
             </p>
           </div>
         </Card>
@@ -92,7 +106,24 @@ export default async function Home() {
           ))}
         </div>
       )}
+
+      <LocalDemoNotice />
     </Shell>
+  );
+}
+
+function LocalDemoNotice() {
+  return (
+    <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+      <p className="font-medium">Local demo boundary</p>
+      <p className="mt-1">
+        The routes in this template hold service account credentials and have no application-level
+        access rules — anyone who can reach them can read and write your workspace. That is fine for
+        local development. Before deploying this publicly, add your own authentication and
+        authorization to <Code>/api/collections</Code> and <Code>/api/records</Code>, and use
+        separate development and production credentials. See <Code>DEPLOY.md</Code>.
+      </p>
+    </div>
   );
 }
 

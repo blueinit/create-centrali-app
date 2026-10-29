@@ -39,6 +39,24 @@ async function main() {
   const args = process.argv.slice(2);
   const flagTemplate = args.find((a) => a.startsWith("--template="))?.split("=")[1] as TemplateName | undefined;
   const flagNoTs = args.includes("--no-typescript");
+  // `--typescript` (and `--yes`) make the TypeScript toggle explicit, so a
+  // name + template + this flag scaffolds with no prompts at all. Without it
+  // the toggle always prompted, which meant the CLI could not be scripted or
+  // run in CI even though the README advertised "skip the prompts with flags".
+  const flagTs = args.includes("--typescript") || args.includes("--yes") || args.includes("-y");
+
+  if (flagTemplate && !TEMPLATES.some((t) => t.value === flagTemplate)) {
+    console.error(
+      pc.red(`Unknown template "${flagTemplate}".`) +
+        ` Valid templates: ${TEMPLATES.map((t) => t.value).join(", ")}`,
+    );
+    process.exit(1);
+  }
+
+  if (flagTs && flagNoTs) {
+    console.error(pc.red("Pass either --typescript or --no-typescript, not both."));
+    process.exit(1);
+  }
 
   const response = await prompts(
     [
@@ -57,7 +75,7 @@ async function main() {
         choices: TEMPLATES.map((t) => ({ title: t.title, value: t.value })),
       },
       {
-        type: flagNoTs ? null : "toggle",
+        type: flagNoTs || flagTs ? null : "toggle",
         name: "typescript",
         message: "Use TypeScript?",
         initial: true,
@@ -76,7 +94,7 @@ async function main() {
   const options: Options = {
     projectName: argName && !argName.startsWith("-") ? argName : response.projectName,
     template: flagTemplate ?? response.template,
-    typescript: flagNoTs ? false : (response.typescript ?? true),
+    typescript: flagNoTs ? false : flagTs ? true : (response.typescript ?? true),
   };
 
   const targetDir = path.resolve(process.cwd(), options.projectName);
@@ -133,11 +151,24 @@ async function main() {
     console.log();
     console.log(`  ${pc.dim("# Start the app — auth works instantly (Clerk keyless mode):")}`);
     console.log(`  ${pc.cyan("npm run dev")}`);
+  } else if (options.template === "nextjs") {
+    console.log(`  ${pc.dim("# Set up your Centrali credentials:")}`);
+    console.log(`  ${pc.cyan("npx @centrali-io/create-centrali-app env")}`);
+    console.log();
+    console.log(`  ${pc.dim("# Or configure manually — copy .env.example to .env.local")}`);
+    console.log(`  ${pc.dim("# This template uses a service account (Console > ACCESS > Service")}`);
+    console.log(`  ${pc.dim("# Accounts), added to workspace_administrators or workspace_developers.")}`);
+    console.log();
+    console.log(`  ${pc.dim("# Create the demo collection:")}`);
+    console.log(`  ${pc.cyan("npm run setup")}`);
+    console.log();
+    console.log(`  ${pc.dim("# Start the app:")}`);
+    console.log(`  ${pc.cyan("npm run dev")}`);
   } else {
     console.log(`  ${pc.dim("# Set up your environment variables:")}`);
     console.log(`  ${pc.cyan("npx @centrali-io/create-centrali-app env")}`);
     console.log();
-    console.log(`  ${pc.dim("# Or configure manually — see .env.example")}`);
+    console.log(`  ${pc.dim("# Or configure manually — copy .env.example to .env.local")}`);
     console.log(`  ${pc.dim("# Create a publishable key: Console > ACCESS > Publishable Keys")}`);
     console.log();
     console.log(`  ${pc.cyan("npm run dev")}`);

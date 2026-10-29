@@ -8,7 +8,25 @@ export default async function SettingsPage() {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  const { orgId } = await ensureWorkspace(userId);
+  // ensureWorkspace never throws; it reports failure by returning a null
+  // orgId. Without this guard the page queried members with orgId === null
+  // and handed null to a component typed `orgId: string`, which is why
+  // `next build` failed to type check.
+  const { orgId, error: bootstrapError } = await ensureWorkspace(userId);
+  if (!orgId) {
+    return (
+      <div className="mx-auto max-w-3xl px-6 py-10">
+        <h2 className="text-lg font-semibold text-gray-900">Settings</h2>
+        <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+          Could not set up your organization
+          {bootstrapError ? `: ${bootstrapError}` : "."} Check that the service account
+          credentials are valid and that <code>npm run setup</code> has created the
+          organizations, members and projects collections, then reload.
+        </div>
+      </div>
+    );
+  }
+
   const client = createCentraliServerClient();
 
   const orgRes = await client.queryRecords("organizations", {
