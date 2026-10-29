@@ -1,8 +1,21 @@
 import { auth } from "@clerk/nextjs/server";
 import { createCentraliServerClient } from "@/lib/centrali";
 import { NextResponse } from "next/server";
+import { authConfigured } from "@/lib/auth";
 
 export async function POST(req: Request) {
+  // Without a Clerk key there is no caller identity to authorize, and auth()
+  // would throw. Refuse explicitly rather than 500.
+  if (!authConfigured) {
+    return NextResponse.json(
+      {
+        error:
+          "Authentication is not configured. Set NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY, then rebuild. See DEPLOY.md.",
+      },
+      { status: 503 },
+    );
+  }
+
   const { userId: currentUserId } = await auth();
   if (!currentUserId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

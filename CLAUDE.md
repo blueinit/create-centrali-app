@@ -68,6 +68,15 @@ Template `package.json` files use `{{projectName}}` which gets replaced during s
 - **Never prefix a secret with `NEXT_PUBLIC_` or `VITE_`** — those values are
   inlined into the browser bundle. A test enforces this for `.env.example`
   and `env.d.ts`.
+- **Clerk is gated, not assumed** (saas): keyless mode only engages under
+  `next dev`. `ClerkProvider`, `clerkMiddleware`, `auth()` and the Clerk UI
+  components each throw `Missing publishableKey` without a key, so all of them
+  sit behind `authConfigured` from `templates/saas/src/lib/auth.ts`. Without
+  that gate `next build` fails for anyone who has no Clerk account, and
+  `next start` returns 500 on every route — the middleware throw takes down
+  even the marketing page. A test asserts that no Clerk import under
+  `templates/saas/src` is ungated. `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is a
+  build-time value, not a runtime one.
 - **Template detection**: `scaffold.ts` stamps `centrali.template` into the
   generated `package.json`; `env.ts` reads it. Do not reintroduce dependency
   sniffing — "has next and a setup script" used to mean the api template until

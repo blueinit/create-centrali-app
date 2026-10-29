@@ -2,10 +2,20 @@
 
 ## Before deploying
 
-In development, Clerk runs in **keyless mode** (no API keys needed). For production, you need Clerk credentials:
+With `npm run dev`, Clerk runs in **keyless mode** — no API keys needed. For production, you need Clerk credentials:
 
 1. Go to [Clerk Dashboard](https://dashboard.clerk.com/) and create an application
 2. Copy your **Publishable Key** and **Secret Key**
+
+> **Set the Clerk keys before you build.** Keyless mode does not engage during
+> `next build` or `next start`. `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is inlined
+> into the browser bundle at build time, so a build produced without it ships
+> with auth switched off — sign-in and the dashboard render a
+> "Authentication is not configured" notice, and the write APIs return `503`.
+> Adding the keys to an already-built deployment does not turn auth on; set them
+> as build-time environment variables and redeploy. (Vercel and Netlify both
+> expose their environment variables to the build step, so configuring them in
+> the dashboard before the first deploy is enough.)
 
 You also need to run the setup script if you haven't already:
 
@@ -94,8 +104,8 @@ netlify deploy --prod
 
 | Variable | Where it runs | What it does |
 |----------|--------------|--------------|
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Browser + Server | Clerk auth (not needed in dev — keyless mode) |
-| `CLERK_SECRET_KEY` | Server only | Clerk server auth (not needed in dev) |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Browser + Server | Clerk auth. Not needed for `npm run dev` (keyless mode). **Required at build time** for a deployed build with auth. |
+| `CLERK_SECRET_KEY` | Server only | Clerk server auth. Not needed for `npm run dev`. |
 | `NEXT_PUBLIC_CENTRALI_*` | Browser + Server | Embedded in JS bundle at build time. Not secrets. |
 | `CENTRALI_CLIENT_ID` | Server only | Service account ID for API routes and server components. |
 | `CENTRALI_CLIENT_SECRET` | Server only | Service account secret. **Never expose to browser.** |

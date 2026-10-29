@@ -4,8 +4,12 @@ import { ensureWorkspace } from "@/lib/bootstrap";
 import { createCentraliServerClient } from "@/lib/centrali";
 import Link from "next/link";
 import { CreateProjectForm } from "./CreateProjectForm";
+import { authConfigured } from "@/lib/auth";
+import { AuthSetupNotice } from "@/app/AuthSetupNotice";
 
 export default async function DashboardPage() {
+  if (!authConfigured) return <AuthSetupNotice />;
+
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 

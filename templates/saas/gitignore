@@ -13,6 +13,10 @@ next-env.d.ts
 .env.development.local
 .env.production.local
 
+# Clerk keyless mode writes a temporary app's publishable AND secret key here
+# on the first `npm run dev`. Never commit it.
+.clerk/
+
 # Misc
 .DS_Store
 *.pem

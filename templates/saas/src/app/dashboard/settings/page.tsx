@@ -3,8 +3,12 @@ import { redirect } from "next/navigation";
 import { ensureWorkspace } from "@/lib/bootstrap";
 import { createCentraliServerClient } from "@/lib/centrali";
 import { InviteMemberForm } from "./InviteMemberForm";
+import { authConfigured } from "@/lib/auth";
+import { AuthSetupNotice } from "@/app/AuthSetupNotice";
 
 export default async function SettingsPage() {
+  if (!authConfigured) return <AuthSetupNotice />;
+
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
