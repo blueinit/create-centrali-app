@@ -35,7 +35,7 @@
    |----------|-------|
    | `CENTRALI_API_URL` | `https://centrali.io` |
    | `CENTRALI_WORKSPACE` | Your workspace slug |
-   | `CENTRALI_CLIENT_ID` | Your service account client ID (`ci_...`) |
+   | `CENTRALI_CLIENT_ID` | Your service account client ID (`sa_...`) |
    | `CENTRALI_CLIENT_SECRET` | Your service account secret (`sk_...`) |
 
    > **Security:** `CENTRALI_CLIENT_SECRET` is a server-side secret. Vercel keeps
@@ -59,7 +59,7 @@ vercel env add NEXT_PUBLIC_CENTRALI_WORKSPACE production <<< "your-workspace-slu
 vercel env add NEXT_PUBLIC_CENTRALI_PK production <<< "pk_live_..."
 vercel env add CENTRALI_API_URL production <<< "https://centrali.io"
 vercel env add CENTRALI_WORKSPACE production <<< "your-workspace-slug"
-vercel env add CENTRALI_CLIENT_ID production <<< "ci_..."
+vercel env add CENTRALI_CLIENT_ID production <<< "sa_..."
 vercel env add CENTRALI_CLIENT_SECRET production <<< "sk_..."
 vercel --prod
 ```
@@ -84,7 +84,7 @@ netlify env:set NEXT_PUBLIC_CENTRALI_WORKSPACE "your-workspace-slug"
 netlify env:set NEXT_PUBLIC_CENTRALI_PK "pk_live_..."
 netlify env:set CENTRALI_API_URL "https://centrali.io"
 netlify env:set CENTRALI_WORKSPACE "your-workspace-slug"
-netlify env:set CENTRALI_CLIENT_ID "ci_..."
+netlify env:set CENTRALI_CLIENT_ID "sa_..."
 netlify env:set CENTRALI_CLIENT_SECRET "sk_..."
 netlify deploy --prod
 ```

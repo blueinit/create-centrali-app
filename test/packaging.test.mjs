@@ -288,3 +288,30 @@ test("nextjs server pages opt out of static prerendering", () => {
     );
   }
 });
+
+test("no template or CLI text advertises the retired `ci_` client ID prefix", () => {
+  // The console issues service account client IDs as `sa_<32 hex>`; the
+  // starters originally documented `ci_...` everywhere. The first repair
+  // corrected .env.example and `src/env.ts` but left DEPLOY.md untouched, so
+  // the wrong prefix survived in the one file a developer reads while wiring
+  // production env vars. Scan every shipped text file rather than a list, so
+  // a new file cannot reintroduce it unnoticed.
+  const roots = [path.join(repoRoot, "templates"), path.join(repoRoot, "src")];
+  const offenders = [];
+  for (const root of roots) {
+    for (const entry of fs.readdirSync(root, { recursive: true, withFileTypes: true })) {
+      if (!entry.isFile()) continue;
+      const full = path.join(entry.parentPath ?? entry.path, entry.name);
+      if (full.includes("node_modules")) continue;
+      if (!/\.(md|ts|tsx|js|jsx|mjs|json|example)$|^gitignore$/.test(entry.name)) continue;
+      if (/\bci_[a-zA-Z0-9.]/.test(fs.readFileSync(full, "utf-8"))) {
+        offenders.push(path.relative(repoRoot, full));
+      }
+    }
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    `these files still show a client ID as \`ci_...\`; the real format is \`sa_<32 hex>\`: ${offenders.join(", ")}`,
+  );
+});
